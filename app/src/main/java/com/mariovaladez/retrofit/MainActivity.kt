@@ -8,10 +8,12 @@ import android.widget.SearchView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mariovaladez.retrofit.Adapter.DogAdapter
+import com.mariovaladez.retrofit.Interceptor.HeaderInterceptor
 import com.mariovaladez.retrofit.databinding.ActivityMainBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import okhttp3.OkHttpClient
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -44,9 +46,16 @@ class MainActivity : AppCompatActivity(), androidx.appcompat.widget.SearchView.O
         return Retrofit.Builder()
             .baseUrl("https://dog.ceo/api/breed/")
             .addConverterFactory(GsonConverterFactory.create())
+            .client(getClient())
             .build()
 
     }
+
+    private fun getClient(): OkHttpClient =
+        OkHttpClient.Builder()
+            .addInterceptor(HeaderInterceptor())
+            .build()
+
 
     private fun searchByName(query:String) {
         CoroutineScope(Dispatchers.IO).launch {
